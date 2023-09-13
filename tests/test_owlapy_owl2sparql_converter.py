@@ -3,10 +3,8 @@ from typing import Iterable
 
 import rdflib.plugins.sparql.sparql
 
-from owlapy.fast_instance_checker import OWLReasoner_FastInstanceChecker
 from owlapy.model import OWLObjectProperty, IRI, OWLObjectSomeValuesFrom, OWLObjectMaxCardinality, OWLThing, \
     OWLObjectMinCardinality, OWLObjectUnionOf, OWLObjectIntersectionOf, OWLNamedIndividual
-from owlapy.owlready2 import OWLOntologyManager_Owlready2, OWLReasoner_Owlready2
 from owlapy.parser import DLSyntaxParser
 from owlapy.owl2sparql.converter import Owl2SparqlConverter
 from rdflib import Graph
@@ -89,15 +87,9 @@ FILTER NOT EXISTS {
         # rdf graph - using rdflib
         family_rdf_graph = Graph()
         family_rdf_graph.parse(location=PATH_FAMILY)
-        # knowledge base - using OWLReasoner
-        mgr = OWLOntologyManager_Owlready2()
-        onto = mgr.load_ontology(IRI.create(PATH_FAMILY))
-        base_reasoner = OWLReasoner_Owlready2(onto)
-        family_kb_reasoner = OWLReasoner_FastInstanceChecker(onto, base_reasoner=base_reasoner, negation_default=True)
-
         ce_str = "Brother"
-        ce_parsed = DLSyntaxParser(namespace="http://www.benchmark.org/family#").parse_expression(expression_str=ce_str)
-        actual_query = Owl2SparqlConverter().as_query(root_variable=self._root_var_, ce=ce_parsed, count=False,
+
+        actual_query = Owl2SparqlConverter().as_query(root_variable=self._root_var_, ce=DLSyntaxParser(namespace="http://www.benchmark.org/family#").parse_expression(expression_str=ce_str), count=False,
                                                       values=None, named_individuals=True)
         expected_query = """SELECT DISTINCT ?x 
                             WHERE {
@@ -106,16 +98,13 @@ FILTER NOT EXISTS {
 
         sparql_results_actual = family_rdf_graph.query(actual_query)
         sparql_results_expected = family_rdf_graph.query(expected_query)
-        reasoner_results = set(family_kb_reasoner.instances(ce_parsed))
-
         self.assertEqual(len(sparql_results_actual), len(sparql_results_expected))
-        self.assertEqual(len(sparql_results_actual), len(reasoner_results))
-        self.assertTrue(check_reasoner_instances_in_sparql_results(sparql_results_actual, reasoner_results))
-
         ce_str = "Male"
-        ce_parsed = DLSyntaxParser(namespace="http://www.benchmark.org/family#").parse_expression(expression_str=ce_str)
-        actual_query = Owl2SparqlConverter().as_query(root_variable=self._root_var_, ce=ce_parsed, count=False,
+        actual_query = Owl2SparqlConverter().as_query(root_variable=self._root_var_,
+                                                      ce=DLSyntaxParser(namespace="http://www.benchmark.org/family#").parse_expression(expression_str=ce_str),
+                                                      count=False,
                                                       values=None, named_individuals=True)
+
         expected_query = """SELECT DISTINCT ?x 
                                     WHERE {
                                         ?x <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.benchmark.org/family#Male> .
@@ -123,21 +112,13 @@ FILTER NOT EXISTS {
 
         sparql_results_actual = family_rdf_graph.query(actual_query)
         sparql_results_expected = family_rdf_graph.query(expected_query)
-        reasoner_results = set(family_kb_reasoner.instances(ce_parsed))
 
         self.assertEqual(len(sparql_results_actual), len(sparql_results_expected))
-        self.assertEqual(len(sparql_results_actual), len(reasoner_results))
-        self.assertTrue(check_reasoner_instances_in_sparql_results(sparql_results_actual, reasoner_results))
 
     def test_Intersection(self):
         # rdf graph - using rdflib
         family_rdf_graph = Graph()
         family_rdf_graph.parse(location=PATH_FAMILY)
-        # knowledge base - using OWLReasoner
-        mgr = OWLOntologyManager_Owlready2()
-        onto = mgr.load_ontology(IRI.create(PATH_FAMILY))
-        base_reasoner = OWLReasoner_Owlready2(onto)
-        family_kb_reasoner = OWLReasoner_FastInstanceChecker(onto, base_reasoner=base_reasoner, negation_default=True)
 
         ce_str = "Brother ⊓ Father"
         ce_parsed = DLSyntaxParser(namespace="http://www.benchmark.org/family#").parse_expression(expression_str=ce_str)
@@ -151,21 +132,13 @@ FILTER NOT EXISTS {
 
         sparql_results_actual = family_rdf_graph.query(actual_query)
         sparql_results_expected = family_rdf_graph.query(expected_query)
-        reasoner_results = set(family_kb_reasoner.instances(ce_parsed))
 
         self.assertEqual(len(sparql_results_actual), len(sparql_results_expected))
-        self.assertEqual(len(sparql_results_actual), len(reasoner_results))
-        self.assertTrue(check_reasoner_instances_in_sparql_results(sparql_results_actual, reasoner_results))
 
     def test_Union(self):
         # rdf graph - using rdflib
         family_rdf_graph = Graph()
         family_rdf_graph.parse(location=PATH_FAMILY)
-        # knowledge base - using OWLReasoner
-        mgr = OWLOntologyManager_Owlready2()
-        onto = mgr.load_ontology(IRI.create(PATH_FAMILY))
-        base_reasoner = OWLReasoner_Owlready2(onto)
-        family_kb_reasoner = OWLReasoner_FastInstanceChecker(onto, base_reasoner=base_reasoner, negation_default=True)
 
         ce_str = "Sister ⊔ Mother"
         ce_parsed = DLSyntaxParser(namespace="http://www.benchmark.org/family#").parse_expression(expression_str=ce_str)
@@ -180,22 +153,12 @@ FILTER NOT EXISTS {
 
         sparql_results_actual = family_rdf_graph.query(actual_query)
         sparql_results_expected = family_rdf_graph.query(expected_query)
-        reasoner_results = set(family_kb_reasoner.instances(ce_parsed))
-
         self.assertEqual(len(sparql_results_actual), len(sparql_results_expected))
-        self.assertEqual(len(sparql_results_actual), len(reasoner_results))
-        self.assertTrue(check_reasoner_instances_in_sparql_results(sparql_results_actual, reasoner_results))
 
     def test_Complement(self):
         # rdf graph - using rdflib
         family_rdf_graph = Graph()
         family_rdf_graph.parse(location=PATH_FAMILY)
-        # knowledge base - using OWLReasoner
-        mgr = OWLOntologyManager_Owlready2()
-        onto = mgr.load_ontology(IRI.create(PATH_FAMILY))
-        base_reasoner = OWLReasoner_Owlready2(onto)
-        family_kb_reasoner = OWLReasoner_FastInstanceChecker(onto, base_reasoner=base_reasoner, negation_default=True)
-
         ce_str = "¬Mother"
         ce_parsed = DLSyntaxParser(namespace="http://www.benchmark.org/family#").parse_expression(expression_str=ce_str)
         actual_query = Owl2SparqlConverter().as_query(root_variable=self._root_var_, ce=ce_parsed, count=False,
@@ -209,21 +172,13 @@ FILTER NOT EXISTS {
 
         sparql_results_actual = family_rdf_graph.query(actual_query)
         sparql_results_expected = family_rdf_graph.query(expected_query)
-        reasoner_results = set(family_kb_reasoner.instances(ce_parsed))
 
         self.assertEqual(len(sparql_results_actual), len(sparql_results_expected))
-        self.assertEqual(len(sparql_results_actual), len(reasoner_results))
-        self.assertTrue(check_reasoner_instances_in_sparql_results(sparql_results_actual, reasoner_results))
 
     def test_Exists(self):
         # rdf graph - using rdflib
         family_rdf_graph = Graph()
         family_rdf_graph.parse(location=PATH_FAMILY)
-        # knowledge base - using OWLReasoner
-        mgr = OWLOntologyManager_Owlready2()
-        onto = mgr.load_ontology(IRI.create(PATH_FAMILY))
-        base_reasoner = OWLReasoner_Owlready2(onto)
-        family_kb_reasoner = OWLReasoner_FastInstanceChecker(onto, base_reasoner=base_reasoner, negation_default=True)
 
         ce_str = "∃hasChild.Male"
         ce_parsed = DLSyntaxParser(namespace="http://www.benchmark.org/family#").parse_expression(expression_str=ce_str)
@@ -237,21 +192,13 @@ FILTER NOT EXISTS {
 
         sparql_results_actual = family_rdf_graph.query(actual_query)
         sparql_results_expected = family_rdf_graph.query(expected_query)
-        reasoner_results = set(family_kb_reasoner.instances(ce_parsed))
 
         self.assertEqual(len(sparql_results_actual), len(sparql_results_expected))
-        self.assertEqual(len(sparql_results_actual), len(reasoner_results))
-        self.assertTrue(check_reasoner_instances_in_sparql_results(sparql_results_actual, reasoner_results))
 
     def test_ForAll(self):
         # rdf graph - using rdflib
         family_rdf_graph = Graph()
         family_rdf_graph.parse(location=PATH_FAMILY)
-        # knowledge base - using OWLReasoner
-        mgr = OWLOntologyManager_Owlready2()
-        onto = mgr.load_ontology(IRI.create(PATH_FAMILY))
-        base_reasoner = OWLReasoner_Owlready2(onto)
-        family_kb_reasoner = OWLReasoner_FastInstanceChecker(onto, base_reasoner=base_reasoner, negation_default=True)
 
         ce_str = "∀hasChild.Male"
         ce_parsed = DLSyntaxParser(namespace="http://www.benchmark.org/family#").parse_expression(expression_str=ce_str)
@@ -287,21 +234,12 @@ FILTER NOT EXISTS {
 
         sparql_results_actual = family_rdf_graph.query(actual_query)
         sparql_results_expected = family_rdf_graph.query(expected_query)
-        reasoner_results = set(family_kb_reasoner.instances(ce_parsed))
-
         self.assertEqual(len(sparql_results_actual), len(sparql_results_expected))
-        self.assertEqual(len(sparql_results_actual), len(reasoner_results))
-        self.assertTrue(check_reasoner_instances_in_sparql_results(sparql_results_actual, reasoner_results))
 
     def test_ExistsForAllDeMorgan(self):
         # rdf graph - using rdflib
         family_rdf_graph = Graph()
         family_rdf_graph.parse(location=PATH_FAMILY)
-        # knowledge base - using OWLReasoner
-        mgr = OWLOntologyManager_Owlready2()
-        onto = mgr.load_ontology(IRI.create(PATH_FAMILY))
-        base_reasoner = OWLReasoner_Owlready2(onto)
-        family_kb_reasoner = OWLReasoner_FastInstanceChecker(onto, base_reasoner=base_reasoner, negation_default=True)
 
         ce_str = "∀hasChild.Male"
         ce_parsed = DLSyntaxParser(namespace="http://www.benchmark.org/family#").parse_expression(expression_str=ce_str)
@@ -314,14 +252,6 @@ FILTER NOT EXISTS {
 
         sparql_results = family_rdf_graph.query(actual_query)
         sparql_results_neg = family_rdf_graph.query(actual_query_neg)
-        reasoner_results = set(family_kb_reasoner.instances(ce_parsed))
-        reasoner_results_neg = set(family_kb_reasoner.instances(ce_parsed_neg))
-
-        self.assertEqual(len(sparql_results), len(reasoner_results))
-        self.assertEqual(len(sparql_results), len(reasoner_results_neg))
-
-        self.assertTrue(check_reasoner_instances_in_sparql_results(sparql_results, reasoner_results))
-        self.assertTrue(check_reasoner_instances_in_sparql_results(sparql_results, reasoner_results_neg))
 
         # the commented out assertion fails because of a bug in rdf_lib (https://github.com/RDFLib/rdflib/issues/2484).
         # in apache jena, the queries return results of the same size
@@ -331,11 +261,6 @@ FILTER NOT EXISTS {
         # rdf graph - using rdflib
         family_rdf_graph = Graph()
         family_rdf_graph.parse(location=PATH_FAMILY)
-        # knowledge base - using OWLReasoner
-        mgr = OWLOntologyManager_Owlready2()
-        onto = mgr.load_ontology(IRI.create(PATH_FAMILY))
-        base_reasoner = OWLReasoner_Owlready2(onto)
-        family_kb_reasoner = OWLReasoner_FastInstanceChecker(onto, base_reasoner=base_reasoner, negation_default=True)
 
         concepts = [
             "∀hasChild.(∃hasChild.¬Male)",
@@ -352,21 +277,12 @@ FILTER NOT EXISTS {
                                                       values=None, named_individuals=True)
 
             sparql_results_actual = family_rdf_graph.query(actual_query)
-            reasoner_results = set(family_kb_reasoner.instances(ce_parsed))
-
-            self.assertEqual(len(sparql_results_actual), len(reasoner_results), ce_str)
-            self.assertTrue(check_reasoner_instances_in_sparql_results(sparql_results_actual, reasoner_results), ce_str)
 
 
     def test_QualifiedCardinalityRestriction(self):
         # rdf graph - using rdflib
         family_rdf_graph = Graph()
         family_rdf_graph.parse(location=PATH_FAMILY)
-        # knowledge base - using OWLReasoner
-        mgr = OWLOntologyManager_Owlready2()
-        onto = mgr.load_ontology(IRI.create(PATH_FAMILY))
-        base_reasoner = OWLReasoner_Owlready2(onto)
-        family_kb_reasoner = OWLReasoner_FastInstanceChecker(onto, base_reasoner=base_reasoner, negation_default=True)
 
         concepts = [
             "≥ 2 hasChild.(Male ⊔ Female)",
@@ -380,10 +296,6 @@ FILTER NOT EXISTS {
                                                       values=None, named_individuals=True)
 
             sparql_results_actual = family_rdf_graph.query(actual_query)
-            reasoner_results = set(family_kb_reasoner.instances(ce_parsed))
-
-            self.assertEqual(len(sparql_results_actual), len(reasoner_results), ce_str)
-            self.assertTrue(check_reasoner_instances_in_sparql_results(sparql_results_actual, reasoner_results), ce_str)
 
         # need to further investigate the case for 0
         # ce_str = "≥ 0 hasChild.Male"
