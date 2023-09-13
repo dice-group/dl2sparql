@@ -1,6 +1,6 @@
-# Description Logic Concept to SPARQL Query
-# Installation
+# DL2SPARQL: Description Logic Concept to SPARQL Query
 
+# Installation
 ```bash
 conda create -n dl2sparql python=3.9 --no-default-packages && conda activate dl2sparql
 pip3 install pytest
@@ -16,7 +16,6 @@ from dl2sparql import DescriptionLogicConcept, SPARQLQuery
 ce_str = "∃hasChild.Male"
 concept = DescriptionLogicConcept(dl_str="∃hasChild.Male", namespace="http://www.benchmark.org/family#")
 query = SPARQLQuery(dl_concept=concept)
-print(query)
 """
 SELECT
  DISTINCT ?x WHERE { 
@@ -26,3 +25,4 @@ SELECT
  }
 """
 ```
+For any questions or wishes, please contact:  ```caglar.demir@upb.de``` or ```caglardemir8@gmail.com```
