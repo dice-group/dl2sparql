@@ -12,11 +12,17 @@ pytest tests
 ```
 
 ```python
-from dl2sparql.parser import DLSyntaxParser
-from dl2sparql.owl2sparql.converter import Owl2SparqlConverter
+from dl2sparql import DescriptionLogicConcept, SPARQLQuery
 ce_str = "∃hasChild.Male"
-ce_parsed = DLSyntaxParser(namespace="http://www.benchmark.org/family#").parse_expression(expression_str=ce_str)
-sparql_query = Owl2SparqlConverter().as_query(root_variable='?x', 
-                                              ce=ce_parsed, count=False,
-                                              values=None, named_individuals=True)
+concept = DescriptionLogicConcept(dl_str="∃hasChild.Male", namespace="http://www.benchmark.org/family#")
+query = SPARQLQuery(dl_concept=concept)
+print(query)
+"""
+SELECT
+ DISTINCT ?x WHERE { 
+?x a <http://www.w3.org/2002/07/owl#NamedIndividual> . 
+?x <http://www.benchmark.org/family#hasChild> ?s_1 . 
+?s_1 a <http://www.benchmark.org/family#Male> . 
+ }
+"""
 ```
