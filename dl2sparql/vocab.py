@@ -4,9 +4,9 @@ from typing import Final, Callable, TypeVar
 from operator import lt, le, gt, ge
 from re import match
 
-from owlapy import namespaces
-from owlapy.model._iri import HasIRI, IRI
-from owlapy.namespaces import Namespaces
+from dl2sparql import namespaces
+from dl2sparql.model._iri import HasIRI, IRI
+from dl2sparql.namespaces import Namespaces
 
 
 class _Vocabulary(HasIRI):

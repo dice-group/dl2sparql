@@ -3,7 +3,6 @@ from functools import singledispatchmethod
 from types import MappingProxyType
 from typing import Union
 
-import owlready2
 from pandas import Timedelta
 
 from owlapy.model import OWLObjectMinCardinality, OWLObjectOneOf, OWLObjectRestriction, OWLPropertyExpression, \
@@ -33,6 +32,7 @@ OWLREADY2_FACET_KEYS = MappingProxyType({
     OWLFacet.FRACTION_DIGITS: "fraction_digits"
 })
 
+"""
 
 class ToOwlready2:
     __slots__ = '_world'
@@ -362,3 +362,4 @@ class FromOwlready2:
             return DurationOWLDatatype
         else:
             raise ValueError(type_)
+"""

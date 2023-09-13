@@ -1,8 +1,8 @@
 import unittest
 
-from owlapy import namespaces
-from owlapy.namespaces import Namespaces
-from owlapy.model import OWLClass, OWLObjectUnionOf, IRI
+from dl2sparql import namespaces
+from dl2sparql.namespaces import Namespaces
+from dl2sparql.model import OWLClass, OWLObjectUnionOf, IRI
 
 base = Namespaces("ex", "http://example.org/")
 

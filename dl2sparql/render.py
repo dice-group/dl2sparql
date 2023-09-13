@@ -4,9 +4,9 @@ import types
 from functools import singledispatchmethod
 from typing import List, Callable
 
-from owlapy import namespaces
-from owlapy.io import OWLObjectRenderer
-from owlapy.model import OWLLiteral, OWLNaryDataRange, OWLObject, OWLClass, OWLObjectSomeValuesFrom, \
+from dl2sparql import namespaces
+from dl2sparql.io import OWLObjectRenderer
+from dl2sparql.model import OWLLiteral, OWLNaryDataRange, OWLObject, OWLClass, OWLObjectSomeValuesFrom, \
     OWLObjectAllValuesFrom, OWLObjectUnionOf, OWLBooleanClassExpression, OWLNaryBooleanClassExpression, \
     OWLObjectIntersectionOf, OWLObjectComplementOf, OWLObjectInverseOf, OWLClassExpression, OWLRestriction, \
     OWLObjectMinCardinality, OWLObjectExactCardinality, OWLObjectMaxCardinality, OWLObjectHasSelf, OWLObjectHasValue, \
@@ -14,7 +14,7 @@ from owlapy.model import OWLLiteral, OWLNaryDataRange, OWLObject, OWLClass, OWLO
     OWLFacetRestriction, OWLDatatypeRestriction, OWLDatatype, OWLDataAllValuesFrom, OWLDataComplementOf, \
     OWLDataUnionOf, OWLDataIntersectionOf, OWLDataHasValue, OWLDataOneOf, OWLDataMaxCardinality, \
     OWLDataMinCardinality, OWLDataExactCardinality
-from owlapy.vocab import OWLFacet
+from dl2sparql.vocab import OWLFacet
 
 
 _DL_SYNTAX = types.SimpleNamespace(

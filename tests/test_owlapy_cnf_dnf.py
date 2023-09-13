@@ -1,10 +1,10 @@
 import unittest
 
-from owlapy.model import OWLObjectProperty, OWLObjectSomeValuesFrom, OWLObjectUnionOf, \
+from dl2sparql.model import OWLObjectProperty, OWLObjectSomeValuesFrom, OWLObjectUnionOf, \
     OWLClass, IRI, OWLDataProperty, OWLDataSomeValuesFrom, OWLNamedIndividual, OWLObjectComplementOf, \
     OWLObjectIntersectionOf, OWLObjectMinCardinality, OWLObjectOneOf
-from owlapy.model.providers import OWLDatatypeMinExclusiveRestriction
-from owlapy.util import TopLevelCNF, TopLevelDNF
+from dl2sparql.model.providers import OWLDatatypeMinExclusiveRestriction
+from dl2sparql.util import TopLevelCNF, TopLevelDNF
 
 
 class TopLevelNFTest(unittest.TestCase):

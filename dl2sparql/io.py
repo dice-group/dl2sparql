@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABCMeta
 
-from owlapy.model import OWLObject
+from dl2sparql.model import OWLObject
 
 
 class OWLObjectRenderer(metaclass=ABCMeta):

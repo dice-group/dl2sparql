@@ -3,10 +3,10 @@ from typing import Iterable
 
 import rdflib.plugins.sparql.sparql
 
-from owlapy.model import OWLObjectProperty, IRI, OWLObjectSomeValuesFrom, OWLObjectMaxCardinality, OWLThing, \
+from dl2sparql.model import OWLObjectProperty, IRI, OWLObjectSomeValuesFrom, OWLObjectMaxCardinality, OWLThing, \
     OWLObjectMinCardinality, OWLObjectUnionOf, OWLObjectIntersectionOf, OWLNamedIndividual
-from owlapy.parser import DLSyntaxParser
-from owlapy.owl2sparql.converter import Owl2SparqlConverter
+from dl2sparql.parser import DLSyntaxParser
+from dl2sparql.owl2sparql.converter import Owl2SparqlConverter
 from rdflib import Graph
 
 PATH_FAMILY = 'KGs/Family/family-benchmark_rich_background.owl'
