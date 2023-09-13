@@ -15,7 +15,7 @@ setup(
     author_email='caglardemir8@gmail.com',
     url='https://github.com/dice-group/DL2SPARQL',
     classifiers=[
-        "Programming Language :: Python :: 3.9.18",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: MIT License"],
     python_requires='>=3.9.18',
     long_description=long_description,
